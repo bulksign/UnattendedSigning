@@ -1,2 +1,5 @@
-# UnattendedSigning
-Sampel which demonstrates unattended signing with Bulksign platform
+# Unattended Signing Sample
+
+
+Sample code which demonstrates unattened signing with Bulksign platform
+
