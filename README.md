@@ -1,5 +1,5 @@
 # Unattended Signing Sample
 
 
-Sample code which demonstrates unattened signing with Bulksign platform
+Sample code which demonstrates unattended signing with Bulksign platform.
 
