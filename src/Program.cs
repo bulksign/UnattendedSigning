@@ -11,10 +11,15 @@ public class Program
 
 	private static string signStepId = string.Empty;
 
+	private static int[] allowedSignatureTypes = new int[]
+		{ (int)SignatureTypeApi.DrawTypeToSign, (int)SignatureTypeApi.ClickToSign, (int)SignatureTypeApi.Stamp };
+	
 	public static void Main()
 	{
 		if (SendEnvelope())
+		{
 			Sign();
+		}
 	}
 
 	public static bool SendEnvelope()
@@ -94,8 +99,17 @@ public class Program
 
 			foreach (PdfFormField signature in signatures)
 			{
-				Console.WriteLine($"Started unattended signing for field {signature.Id} ");
+				int signatureType = (signature as PdfFormSignature).SignatureType;
 
+				//can we sign this type of signature ?
+				if (!allowedSignatureTypes.Contains(signatureType))
+				{
+					Console.WriteLine($"Signature {signature.Id} is not a support signature type for unttended signing, skipping it ");
+					return;
+				}
+				
+				Console.WriteLine($"Started unattended signing for field {signature.Id}, signature type is {signatureType} ");
+				
 				SigningSdk.BulksignResult<string> sigResult = client.Sign(signStepId, document.Id, signature.Id, string.Empty, ApiKeys.SIGN_KEY);
 
 				if (sigResult.IsSuccessful == false)
