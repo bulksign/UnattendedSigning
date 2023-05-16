@@ -1,7 +1,6 @@
 ﻿using Bulksign.Api;
 using Bulksign.Api.SignSdk;
 using Bulksign.Context;
-using Bulksign.Pal;
 
 namespace Bulksign.Sample;
 
@@ -11,8 +10,6 @@ public class Program
 
 	private static string signStepId = string.Empty;
 
-	private static int[] allowedSignatureTypes = new int[]
-		{ (int)SignatureTypeApi.DrawTypeToSign, (int)SignatureTypeApi.ClickToSign, (int)SignatureTypeApi.Stamp };
 	
 	public static void Main()
 	{
@@ -91,40 +88,32 @@ public class Program
 
 		SigningSdk.BulksignResult<SignContext> context = client.GetSignContext(signStepId, ApiKeys.SIGN_KEY);
 
-		//go through each document and eac signature field and sign them 
+		bool isBatchSigningEnabled = context.Response.EnableBatchSign;
 
-		foreach (SignContextDocument document in context.Response.Documents)
+		if (isBatchSigningEnabled)
 		{
-			List<PdfFormField> signatures = document.FormElements.Where(f => f.PdfFormFieldType == FormFieldType.Signature).ToList();
-
-			foreach (PdfFormField signature in signatures)
-			{
-				int signatureType = (signature as PdfFormSignature).SignatureType;
-
-				//can we sign this type of signature ?
-				if (!allowedSignatureTypes.Contains(signatureType))
-				{
-					Console.WriteLine($"Signature {signature.Id} is not a support signature type for unttended signing, skipping it ");
-					return;
-				}
-				
-				Console.WriteLine($"Started unattended signing for field {signature.Id}, signature type is {signatureType} ");
-				
-				SigningSdk.BulksignResult<string> sigResult = client.Sign(signStepId, document.Id, signature.Id, string.Empty, ApiKeys.SIGN_KEY);
-
-				if (sigResult.IsSuccessful == false)
-				{
-					Console.WriteLine($"Signing failed for field {signature.Id}");
-				}
-				else
-				{
-					Console.WriteLine($"Signing successful for field {signature.Id}");
-				}
-			}
+			//batch signing is enabled for this SignStep so switch to batch signing mode
+			new BatchSign().Sign(context.Response, client);
 		}
-
-		client.Finish(signStepId, ApiKeys.SIGN_KEY);
-
+		else
+		{
+			//no batch signing, so sign each form field individually
+			new SequentialSign().Sign(context.Response, client);
+		}
+	
+		
+		//finish the entire signing process here
+		SigningSdk.BulksignResult<string> finishResult = client.Finish(signStepId, ApiKeys.SIGN_KEY);
+		
+		if (finishResult.IsSuccessful == false)
+		{
+			Console.WriteLine($"Finishing the signing step failed : {finishResult.ErrorMessage}");
+			return;
+		}
+		
 		Console.WriteLine("DONE");
 	}
+	
+	
+	
 }
