@@ -88,17 +88,17 @@ public class Program
 
 		SigningSdk.BulksignResult<SignContext> context = client.GetSignContext(signStepId, ApiKeys.SIGN_KEY);
 
-		bool isBatchSigningEnabled = context.Response.EnableBatchSign;
+		bool isBatchSigningEnabled = context.Result.EnableBatchSign;
 
 		if (isBatchSigningEnabled)
 		{
 			//batch signing is enabled for this SignStep so switch to batch signing mode
-			new BatchSign().Sign(context.Response, client);
+			new BatchSign().Sign(context.Result, client);
 		}
 		else
 		{
 			//no batch signing, so sign each form field individually
-			new SequentialSign().Sign(context.Response, client);
+			new SequentialSign().Sign(context.Result, client);
 		}
 	
 		
