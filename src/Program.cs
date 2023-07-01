@@ -73,11 +73,11 @@ public class Program
 			return false;
 		}
 
-		envelopeId = result.Response.EnvelopeId;
+		envelopeId = result.Result.EnvelopeId;
 
-		signStepId = result.Response.RecipientAccess.FirstOrDefault().SignStepIdentifier;
+		signStepId = result.Result.RecipientAccess.FirstOrDefault().SignStepIdentifier;
 
-		Console.WriteLine($" {nameof(SendEnvelope)} request was successful, envelopeId is {result.Response.EnvelopeId} was created");
+		Console.WriteLine($" {nameof(SendEnvelope)} request was successful, envelopeId is {result.Result.EnvelopeId} was created");
 
 		return true;
 	}
