@@ -2,6 +2,7 @@ using Bulksign.Api;
 using Bulksign.Api.SignSdk;
 using Bulksign.Context;
 using Bulksign.Pal;
+using Bulksign.SigningSdk;
 
 namespace Bulksign.Sample;
 
@@ -54,9 +55,18 @@ public class BatchSign
             //now batch sign all unique signature types
             foreach (KeyValuePair<int,BatchSignatureInformation> pair in toBeSigned)
             {
-                Console.WriteLine($"Starting batch sign for signature type : {pair.Key}");                
-                
-                SigningSdk.BulksignResult<string> sigResult = client.Sign(context.PublicId , pair.Value.DocumentId, pair.Value.SignatureId, string.Empty, ApiKeys.SIGN_KEY);
+                Console.WriteLine($"Starting batch sign for signature type : {pair.Key}");
+
+                SignApiModel model = new SignApiModel()
+                {
+                    SignStepId            = context.PublicId,
+                    DocumentId            = pair.Value.DocumentId,
+                    SignatureId           = pair.Value.SignatureId,
+                    SignatureImageContent = string.Empty,
+                    ClientDate            = string.Empty
+                };
+
+                SigningSdk.BulksignResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);
                 
                 if (sigResult.IsSuccessful == false)
                 {

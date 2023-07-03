@@ -2,6 +2,7 @@ using Bulksign.Api;
 using Bulksign.Api.SignSdk;
 using Bulksign.Context;
 using Bulksign.Pal;
+using Bulksign.SigningSdk;
 
 namespace Bulksign.Sample;
 
@@ -31,9 +32,7 @@ public class SequentialSign
                     Console.WriteLine($"Signature {signature.Id} is a OTP signature which is not a supported signature type for unattended signing, skipping it ");
                     continue;
                 }
-
                 
-               
                 //can we sign this type of signature in unattended mode?
                 if (! Constants.SignatureTypesWithoutUserInteraction.Contains(signatureType))
                 {
@@ -42,8 +41,17 @@ public class SequentialSign
                 }
 				
                 Console.WriteLine($"Started unattended signing for field {signature.Id}, signature type is {signatureType} ");
-				
-                SigningSdk.BulksignResult<string> sigResult = client.Sign(context.PublicId , document.Id, signature.Id, string.Empty, ApiKeys.SIGN_KEY);
+
+                SignApiModel model = new SignApiModel()
+                {
+                    SignStepId            = context.PublicId,
+                    DocumentId            = document.Id,
+                    SignatureId           = signature.Id,
+                    SignatureImageContent = string.Empty,
+                    ClientDate            = string.Empty
+                };
+
+                SigningSdk.BulksignResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);
 
                 if (sigResult.IsSuccessful == false)
                 {

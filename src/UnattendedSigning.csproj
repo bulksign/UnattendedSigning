@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bulksign.SignSdk" Version="0.3.0" />
+    <PackageReference Include="Bulksign.SignSdk" Version="0.4.0" />
     <PackageReference Include="BulksignSdk" Version="4.62.0" />
   </ItemGroup>
 
