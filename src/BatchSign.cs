@@ -51,19 +51,46 @@ public class BatchSign
                     });
                 }
             }
+
+            SignatureAuthentication auth = null;
             
             //now batch sign all unique signature types
             foreach (KeyValuePair<int,BatchSignatureInformation> pair in toBeSigned)
             {
                 Console.WriteLine($"Starting batch sign for signature type : {pair.Key}");
 
+                if (pair.Key == (int)SignatureTypeApi.OTPSign)
+                {
+                    SigningSdk.BulksignResult<string> otpResult = client.SendOTPForSignature(new SendSignatureOTPApiModel()
+                    {
+                        DocumentId = pair.Value.DocumentId,
+                        SignatureId = pair.Value.SignatureId,
+                        SignStepId = context.PublicId
+    
+                    }, ApiKeys.SIGN_KEY);
+
+                    if (!otpResult.IsSuccessful)
+                    {
+                        Console.WriteLine("OTP could not be sent : " + otpResult.ErrorMessage);
+                    }
+                        
+                    //now ask the user for the OTP 
+                    string userOtp = "......";
+
+                    auth = new OTPSignatureAuthentication()
+                    {
+                        Otp = userOtp
+                    };
+                }
+                
                 SignApiModel model = new SignApiModel()
                 {
                     SignStepId            = context.PublicId,
                     DocumentId            = pair.Value.DocumentId,
                     SignatureId           = pair.Value.SignatureId,
                     SignatureImageContent = string.Empty,
-                    ClientDate            = string.Empty
+                    ClientDate            = string.Empty,
+                    Configuration = auth
                 };
 
                 SigningSdk.BulksignResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);

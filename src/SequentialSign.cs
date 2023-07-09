@@ -16,6 +16,8 @@ public class SequentialSign
         {
             List<PdfFormField> signatures = document.FormElements.Where(f => f.PdfFormFieldType == FormFieldType.Signature).ToList();
 
+            SignatureAuthentication auth  = null;
+            
             foreach (PdfFormField signature in signatures)
             {
                 int signatureType = (signature as PdfFormSignature).SignatureType;
@@ -29,6 +31,34 @@ public class SequentialSign
                 
                 if (signatureType == (int)SignatureTypeApi.OTPSign)
                 {
+                    //OTPSign signatures can be signed but they require to first send the OTP to the user and
+                    //to allow the user to enter it. Also signing individual OTPSignatures and sending OTPs for each signature field
+                    //doesnt makes sense. Consider enabling batch signing and sending 1 OTP to sign ALL fields.
+                    
+                    //send the OTP
+                    SigningSdk.BulksignResult<string> otpResult = client.SendOTPForSignature(new SendSignatureOTPApiModel()
+                    {
+                        DocumentId = document.Id,
+                        SignatureId = signature.Id,
+                        SignStepId = context.PublicId
+    
+                    }, ApiKeys.SIGN_KEY);
+
+                   if (!otpResult.IsSuccessful)
+                   {
+                       Console.WriteLine("OTP could not be sent : " + otpResult.ErrorMessage);
+                   }
+                           
+  
+                   //now ask the user for the OTP 
+                   string userOtp = "......";
+
+
+                   auth = new OTPSignatureAuthentication()
+                   {
+                       Otp = userOtp
+                   };
+
                     Console.WriteLine($"Signature {signature.Id} is a OTP signature which is not a supported signature type for unattended signing, skipping it ");
                     continue;
                 }
@@ -48,7 +78,8 @@ public class SequentialSign
                     DocumentId            = document.Id,
                     SignatureId           = signature.Id,
                     SignatureImageContent = string.Empty,
-                    ClientDate            = string.Empty
+                    ClientDate            = string.Empty,
+                    Configuration = auth
                 };
 
                 SigningSdk.BulksignResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);
