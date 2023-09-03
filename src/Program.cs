@@ -87,7 +87,7 @@ public class Program
 		SignApiClient client = new SignApiClient();
 
 		SigningSdk.BulksignResult<SignContext> context = client.GetSignContext(signStepId, ApiKeys.SIGN_KEY);
-
+		
 		bool isBatchSigningEnabled = context.Result.EnableBatchSign;
 
 		if (isBatchSigningEnabled)
@@ -101,6 +101,8 @@ public class Program
 			new SequentialSign().Sign(context.Result, client);
 		}
 	
+		//automatic form filling is also supported if you need it
+		//new FormFilling(client).FillFormFields(context.Result);
 		
 		//finish the entire signing process here
 		SigningSdk.BulksignResult<string> finishResult = client.Finish(signStepId, ApiKeys.SIGN_KEY);
@@ -113,7 +115,4 @@ public class Program
 		
 		Console.WriteLine("DONE");
 	}
-	
-	
-	
 }

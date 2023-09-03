@@ -22,7 +22,8 @@ public class SequentialSign
             {
                 int signatureType = (signature as PdfFormSignature).SignatureType;
 
-                //unattended signature with a USB/smart card certificate is not supported
+                //unattended signature with a USB/smart card certificate is not supported because the user has to interact 
+                //at least once with popup where he/she must enter the certificate PIN.
                 if (signatureType == (int)SignatureTypeApi.LocalCertificate)
                 {
                     Console.WriteLine($"Signature {signature.Id} is a LocalCertificate signature which is not a supported signature type for unattended signing, skipping it ");
