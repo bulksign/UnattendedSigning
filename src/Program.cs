@@ -36,8 +36,16 @@ public class Program
 		envelope.DaysUntilExpire = 10;
 		//we will sign unattended so it makes no sense to send emails to the signer
 		envelope.DisableSignerEmailNotifications = true;
-		envelope.EmailMessage = "Please sign this document";
-		envelope.EmailSubject = "Please Bulksign this document";
+		envelope.Messages = new MessageApiModel[]
+		{
+			new MessageApiModel()
+			{
+				Language = "en-us",
+				Message = "Please sign this document",
+				Subject = "Please sign this document"
+			}
+
+		};
 		envelope.Name = "Test envelope";
 
 		envelope.Recipients = new[]
