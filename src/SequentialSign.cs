@@ -34,7 +34,7 @@ public class SequentialSign
                 {
                     //OTPSign signatures can be signed but they require to first send the OTP to the user and
                     //to allow the user to enter it. Also signing individual OTPSignatures and sending OTPs for each signature field
-                    //doesnt makes sense. Consider enabling batch signing and sending 1 OTP to sign ALL fields.
+                    //doesn't make sense. Consider enabling batch signing and sending 1 OTP to sign ALL fields.
                     
                     //send the OTP
                     SigningSdk.BulksignResult<string> otpResult = client.SendOTPForSignature(new SendSignatureOTPApiModel()
