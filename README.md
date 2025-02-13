@@ -9,7 +9,7 @@ Brief documentation about this feature is available <a href="https://bulksign.co
 
 - we send a new envelope for signing using SendEnvelope API and we obtain the SignStep identifier .
 
-- using the SignSDK, we use GetSignContext to obtain informations about this specific SignStep.
+- using the SignSDK, we use GetSignContext to obtain information about this specific SignStep.
 
 - we check if EnableBatchSign is enabled for this SignStep.
 
@@ -32,7 +32,7 @@ new SequentialSign().Sign
 
 #Notes :
 
-1) If you plan to implement unattented signing, consider enabling BatchSigning when creating the envelope :
+1) If you plan to implement unattended signing, consider enabling BatchSigning when creating the envelope :
 ```
     envelope.EnableBatchSign = true;
 ```

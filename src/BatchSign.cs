@@ -61,7 +61,7 @@ public class BatchSign
 
                 if (pair.Key == (int)SignatureTypeApi.OTPSign)
                 {
-                    SigningSdk.BulksignResult<string> otpResult = client.SendOTPForSignature(new SendSignatureOTPApiModel()
+                    ApiResult<string> otpResult = client.SendOTPForSignature(new SendSignatureOTPApiModel()
                     {
                         DocumentId = pair.Value.DocumentId,
                         SignatureId = pair.Value.SignatureId,
@@ -69,7 +69,7 @@ public class BatchSign
     
                     }, ApiKeys.SIGN_KEY);
 
-                    if (!otpResult.IsSuccessful)
+                    if (!otpResult.IsSuccess)
                     {
                         Console.WriteLine("OTP could not be sent : " + otpResult.ErrorMessage);
                     }
@@ -93,9 +93,9 @@ public class BatchSign
                     Configuration = auth
                 };
 
-                SigningSdk.BulksignResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);
+                ApiResult<string> sigResult = client.Sign(model, ApiKeys.SIGN_KEY);
                 
-                if (sigResult.IsSuccessful == false)
+                if (sigResult.IsSuccess == false)
                 {
                     Console.WriteLine($"Batch signing failed for signatureType {pair.Key}, fieldId {pair.Value.SignatureId}");
                 }

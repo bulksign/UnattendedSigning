@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bulksign.SignSdk" Version="0.4.0" />
-    <PackageReference Include="BulksignSdk" Version="4.90.0" />
+    <PackageReference Include="Bulksign.SignSdk" Version="0.5.0" />
+    <PackageReference Include="BulksignSdk" Version="4.109.1" />
   </ItemGroup>
 
   <ItemGroup>

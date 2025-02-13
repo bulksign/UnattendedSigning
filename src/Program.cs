@@ -33,9 +33,8 @@ public class Program
 
 		EnvelopeApiModel envelope = new EnvelopeApiModel();
 		envelope.EnvelopeType = EnvelopeTypeApi.Serial;
-		envelope.DaysUntilExpire = 10;
 		//we will sign unattended so it makes no sense to send emails to the signer
-		envelope.DisableSignerEmailNotifications = true;
+		envelope.DisableRecipientNotifications = true;
 		envelope.Messages = new MessageApiModel[]
 		{
 			new MessageApiModel()
@@ -73,9 +72,9 @@ public class Program
 			}
 		};
 
-		BulksignResult<SendEnvelopeResultApiModel> result = api.SendEnvelope(token, envelope);
+		ApiResult<SendEnvelopeResultApiModel> result = api.SendEnvelope(token, envelope);
 
-		if (result.IsSuccessful == false)
+		if (result.IsSuccess == false)
 		{
 			Console.WriteLine($"Request failed : ErrorCode '{result.ErrorCode}' , Message {result.ErrorMessage}");
 			return false;
@@ -94,7 +93,7 @@ public class Program
 	{
 		SignApiClient client = new SignApiClient();
 
-		SigningSdk.BulksignResult<SignContext> context = client.GetSignContext(signStepId, ApiKeys.SIGN_KEY);
+		ApiResult<SignContext> context = client.GetSignContext(signStepId, ApiKeys.SIGN_KEY);
 		
 		bool isBatchSigningEnabled = context.Result.EnableBatchSign;
 
@@ -113,9 +112,9 @@ public class Program
 		//new FormFilling(client).FillFormFields(context.Result);
 		
 		//finish the entire signing process here
-		SigningSdk.BulksignResult<string> finishResult = client.Finish(signStepId, ApiKeys.SIGN_KEY);
+		ApiResult<string> finishResult = client.Finish(signStepId, ApiKeys.SIGN_KEY);
 		
-		if (finishResult.IsSuccessful == false)
+		if (finishResult.IsSuccess == false)
 		{
 			Console.WriteLine($"Finishing the signing step failed : {finishResult.ErrorMessage}");
 			return;
