@@ -73,7 +73,7 @@ public class FormFilling
             DocumentId = document.Id,
             SignStepId = stepIdentifier,
             Value = value,
-            PdfId = formFieldId
+            FormFieldId = formFieldId
             
         },  ApiKeys.SIGN_KEY);
     } 
